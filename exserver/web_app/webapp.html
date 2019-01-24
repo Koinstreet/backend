@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+
+<html>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<head>
+		<title>BitMEX WebApp</title>
+		<style>
+			body {font-family: Arial;}
+
+			/* Style the tab */
+			.tab {
+			  overflow: hidden;
+			  border: 1px solid #ccc;
+			  background-color: blue;
+			}
+
+			/* Style the buttons inside the tab */
+			.tab button {
+			  background-color: inherit;
+			  float: left;
+			  border: none;
+			  outline: none;
+			  cursor: pointer;
+			  padding: 14px 16px;
+			  transition: 0.3s;
+			  font-size: 17px;
+			}
+
+			/* Change background color of buttons on hover */
+			.tab button:hover {
+			  background-color: #ddd;
+			}
+
+			/* Create an active/current tablink class */
+			.tab button.active {
+			  background-color: #ccc;
+			}
+
+			/* Style the tab content */
+			.tabcontent {
+			  display: none;
+			  padding: 6px 12px;
+			  border: 1px solid #ccc;
+			  border-top: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="tab">
+		  <button class="tablinks" onclick="openCity(event, 'Coinbase')">Coinbase</button>
+		  <button class="tablinks" onclick="openCity(event, 'Binance')">Binance</button>
+		  <button class="tablinks" onclick="openCity(event, 'Bittrex')">Bittrex</button>
+		</div>
+
+		<div id="Coinbase" class="tabcontent">
+		</div>
+
+		<div id="Binance" class="tabcontent">
+		</div>
+
+		<div id="Bittrex" class="tabcontent">
+		</div>
+
+		<script>
+			function openCity(evt, cityName) {
+			  var i, tabcontent, tablinks;
+			  tabcontent = document.getElementsByClassName("tabcontent");
+			  for (i = 0; i < tabcontent.length; i++) {
+			    tabcontent[i].style.display = "none";
+			  }
+			  tablinks = document.getElementsByClassName("tablinks");
+			  for (i = 0; i < tablinks.length; i++) {
+			    tablinks[i].className = tablinks[i].className.replace(" active", "");
+			  }
+			  document.getElementById(cityName).style.display = "block";
+			  evt.currentTarget.className += " active";
+			}
+		</script>
+		<script language = "javascript" type = "text/javascript">
+			//var ws_url = "wss://ws-feed.pro.coinbase.com";
+			var ws_url = "ws://localhost:5678/";
+			var output;
+
+			function init(){
+				output = document.getElementById("output");
+				WebSocketTest();
+			}
+
+			function WebSocketTest() {
+
+				var ws = new WebSocket(ws_url);
+				var store_msg = {}
+
+				ws.onopen = function() {
+					//var msgs = {"type":"subscribe","product_ids":["BTC-USD"]};
+					//var json_msg = JSON.stringify(msgs);
+					//ws.send(json_msg);
+				};
+
+				ws.onmessage = function (evt) {
+					var received_msg = evt.data;
+					var parsed_json = JSON.parse(received_msg);
+					//output.innerHTML = JSON.stringify(parsed_json);
+					//document.getElementById(parsed_json['Exchange']).innerHTML = JSON.strinparsed_json
+					//store_msg[parsed_json[tag]] = JSON.stringify(parsed_json)
+					handle_data(parsed_json)
+				};
+
+				ws.onclose = function() {
+
+				};
+			}
+
+			function handle_data(data) {
+				document.getElementById(data['Exchange']).innerHTML = JSON.stringify(data)
+			}
+
+
+			window.addEventListener("load", init, false);
+
+		</script>
+
+	</body>
+</html>
